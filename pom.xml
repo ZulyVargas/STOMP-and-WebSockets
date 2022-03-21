@@ -11,11 +11,11 @@
     <name>websockets-msbroker-example</name>
     <description>Demo project for Spring Boot</description>
 
+<!--Se actualizó la versión, no servia spring-boot:run-->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.4.1.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>1.5.3.RELEASE</version>
     </parent>
 
     <properties>
