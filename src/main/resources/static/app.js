@@ -29,23 +29,24 @@ var app = (function () {
 
 
     var connectAndSubscribe = function () {
-        console.info('Connecting to WS...');
         var socket = new SockJS('/stompendpoint');
         //Creación del stomp
         stompClient = Stomp.over(socket);
-
         //subscribe to /topic/TOPICXX when connections succeed
         //Conexión/Subscripción
         stompClient.connect({}, function (frame) {
-            console.log('Connected: ' + frame);
-            stompClient.subscribe('/topic/newpoint', function (eventbody) {
+            //console.log('Connected: ' + frame);
+            var idConnection = $("#identificador").val();
+             initCanvasEvent();
+            console.log("idConection en ConnectAndSubscribe----" + idConnection);
+            stompClient.subscribe('/topic/newpoint.'+ idConnection, function (eventbody) {
                 var theObject=JSON.parse(eventbody.body);
                 /*alert("COORDENADA X " + theObject.x + " COORDENADA Y " + theObject.y);
                 alert(eventbody);*/
                 //Dibujar punto en todos las sesiones actuales
-                console.log(theObject);
                 addPointToCanvas(theObject);
             });
+
         });
 
     };
@@ -56,7 +57,9 @@ var app = (function () {
              var point = getMousePosition(event);
              //addPointToCanvas(point);
              //Cuando se dibuja se envía la información a los suscritos(se llama a send)
-             stompClient.send("/topic/newpoint", {}, JSON.stringify(point));
+             var idConnection = $("#identificador").val();
+             //Las publicaciones se realicen al tópico asociado al identificador ingresado
+             stompClient.send('/topic/newpoint.'+ idConnection, {}, JSON.stringify(point));
         })
 
     };
@@ -68,12 +71,12 @@ var app = (function () {
             //Dibujar punto cuando se reciba el evento
              initCanvasEvent();
             //websocket connection
-            connectAndSubscribe();
+            //connectAndSubscribe();
         },
 
         publishPoint: function(px,py){
             var pt=new Point(px,py);
-            console.info("publishing point at "+pt);
+            //console.info("publishing point at "+pt);
             addPointToCanvas(pt);
             //publicar el evento
             //Parte 1.1
@@ -86,7 +89,7 @@ var app = (function () {
             }
             setConnected(false);
             console.log("Disconnected");
-        }
-    };
-
+        },
+        connectAndSubscribe:connectAndSubscribe
+    }
 })();

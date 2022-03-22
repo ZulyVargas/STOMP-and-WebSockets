@@ -91,9 +91,13 @@ Ajuste la aplicación anterior para que pueda manejar más de un dibujo a la vez
 3. De la misma manera, haga que las publicaciones se realicen al tópico asociado al identificador ingresado por el usuario.
 4. Rectifique que se puedan realizar dos dibujos de forma independiente, cada uno de éstos entre dos o más clientes.
 
-	```bash
-	git commit -m "PARTE 3".
-	```
+    ```bash
+    git commit -m "PARTE 3".
+    ```
+Lo dibujado en la conexión 90 se dibuja en todos los clientes suscritos. Lo dibujado en la conexión 120 es independiente a estas
+como se puede ver en la imagen.
+
+![](img/parte3.png)
 
 
 ## Parte IV.
