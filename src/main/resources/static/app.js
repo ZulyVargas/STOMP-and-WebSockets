@@ -40,10 +40,24 @@ var app = (function () {
             console.log('Connected: ' + frame);
             stompClient.subscribe('/topic/newpoint', function (eventbody) {
                 var theObject=JSON.parse(eventbody.body);
-                alert("COORDENADA X " + theObject.x + " COORDENADA Y " + theObject.y);
-                alert(eventbody);
+                /*alert("COORDENADA X " + theObject.x + " COORDENADA Y " + theObject.y);
+                alert(eventbody);*/
+                //Dibujar punto en todos las sesiones actuales
+                console.log(theObject);
+                addPointToCanvas(theObject);
             });
         });
+
+    };
+    //Evento para el canvas
+    var initCanvasEvent = function(){
+        canvas.addEventListener("pointerdown", (event) => {
+             //Retorna x e y del evento
+             var point = getMousePosition(event);
+             //addPointToCanvas(point);
+             //Cuando se dibuja se envía la información a los suscritos(se llama a send)
+             stompClient.send("/topic/newpoint", {}, JSON.stringify(point));
+        })
 
     };
 
@@ -51,7 +65,8 @@ var app = (function () {
 
         init: function () {
             var can = document.getElementById("canvas");
-
+            //Dibujar punto cuando se reciba el evento
+             initCanvasEvent();
             //websocket connection
             connectAndSubscribe();
         },
