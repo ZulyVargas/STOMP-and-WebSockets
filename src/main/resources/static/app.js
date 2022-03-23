@@ -1,5 +1,11 @@
 var app = (function () {
 
+    class Polygon{
+        constructor(points){
+            this.points = points;
+        }
+    }
+
     class Point{
         constructor(x,y){
             this.x=x;
@@ -35,21 +41,42 @@ var app = (function () {
         //subscribe to /topic/TOPICXX when connections succeed
         //Conexión/Subscripción
         stompClient.connect({}, function (frame) {
-            //console.log('Connected: ' + frame);
+            console.log('Connected: ' + frame);
             var idConnection = $("#identificador").val();
              initCanvasEvent();
             console.log("idConection en ConnectAndSubscribe----" + idConnection);
             stompClient.subscribe('/topic/newpoint.'+ idConnection, function (eventbody) {
                 var theObject=JSON.parse(eventbody.body);
-                /*alert("COORDENADA X " + theObject.x + " COORDENADA Y " + theObject.y);
-                alert(eventbody);*/
                 //Dibujar punto en todos las sesiones actuales
                 addPointToCanvas(theObject);
             });
+            stompClient.subscribe('/topic/newpolygon.'+ idConnection, function (eventbody) {
+                var theObject = JSON.parse(eventbody.body);
+                var polygon = new Polygon(theObject);
+                //alert("SI RECIBÍ 3 PUNTOS O MÁS!!!   " + polygon.points);
+                drawNewPolygon(polygon);
 
+            });
         });
 
     };
+
+    var drawNewPolygon = function(polygon){
+        var canvas = document.getElementById('canvas');
+        var ctx = canvas.getContext('2d');
+        ctx.beginPath();
+        ctx.fillStyle = '#8BADD0';
+        console.log("antes del for ");
+        console.log("Longitud" +  polygon.points.length );
+        for(var i = 1; i <  5; i++){
+            console.log("Entre al for ");
+            if (i == 1 )ctx.moveTo(polygon.points[polygon.points.length - i].x, polygon.points[polygon.points.length - i].y);
+            ctx.lineTo(polygon.points[polygon.points.length - i].x, polygon.points[polygon.points.length - i].y);
+        }
+        ctx.closePath();
+        ctx.fill();
+    };
+
     //Evento para el canvas
     var initCanvasEvent = function(){
         canvas.addEventListener("pointerdown", (event) => {
@@ -59,7 +86,8 @@ var app = (function () {
              //Cuando se dibuja se envía la información a los suscritos(se llama a send)
              var idConnection = $("#identificador").val();
              //Las publicaciones se realicen al tópico asociado al identificador ingresado
-             stompClient.send('/topic/newpoint.'+ idConnection, {}, JSON.stringify(point));
+             //stompClient.send('/topic/newpoint.'+ idConnection, {}, JSON.stringify(point));
+             stompClient.send('/app/newpoint.'+ idConnection, {}, JSON.stringify(point));
         })
 
     };
